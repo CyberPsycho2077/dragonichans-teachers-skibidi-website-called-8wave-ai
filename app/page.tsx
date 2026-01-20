@@ -27,13 +27,13 @@ export default function Home() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/contact"
-                className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)] transition-all hover:bg-slate-800"
+                className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)] transition-all duration-300 hover:bg-slate-800"
               >
                 Book a Demo
               </Link>
               <Link
                 href="/features"
-                className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-slate-400 hover:bg-white"
+                className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:border-slate-200 hover:bg-white/40"
               >
                 Explore Features
               </Link>

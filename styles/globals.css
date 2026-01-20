@@ -53,11 +53,17 @@ body {
   box-sizing: border-box;
 }
 
+/* PERFORMANCE: Simplified grain overlay - removed SVG filter */
 .grain-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.03) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 3px
+  );
   mix-blend-mode: soft-light;
-  opacity: 0.03;
+  opacity: 0.02;
 }
 
 .grid-dots {
@@ -65,22 +71,23 @@ body {
   background-size: 24px 24px;
 }
 
+/* PERFORMANCE: Static gradients instead of multiple radial-gradients */
 .ethereal-section {
-  background: radial-gradient(1200px 800px at 20% -10%, rgba(56, 189, 248, 0.15), transparent 70%),
-    radial-gradient(900px 600px at 80% 0%, rgba(167, 139, 250, 0.12), transparent 65%),
-    radial-gradient(800px 600px at 50% 70%, rgba(14, 165, 233, 0.12), transparent 70%),
-    var(--background);
+  background: linear-gradient(180deg, 
+    rgba(56, 189, 248, 0.08) 0%, 
+    var(--background) 40%,
+    rgba(14, 165, 233, 0.06) 100%
+  );
 }
 
+/* PERFORMANCE: Reduced complexity, removed extra radial gradients */
 .ethereal-mesh {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(at 20% 20%, rgba(56, 189, 248, 0.18) 0px, transparent 55%),
-    radial-gradient(at 80% 10%, rgba(167, 139, 250, 0.16) 0px, transparent 55%),
-    radial-gradient(at 10% 70%, rgba(125, 211, 252, 0.18) 0px, transparent 55%),
-    radial-gradient(at 90% 70%, rgba(147, 197, 253, 0.16) 0px, transparent 55%);
-  opacity: 0.75;
+    radial-gradient(at 20% 20%, rgba(56, 189, 248, 0.12) 0px, transparent 55%),
+    radial-gradient(at 80% 70%, rgba(147, 197, 253, 0.10) 0px, transparent 55%);
+  opacity: 0.65;
   pointer-events: none;
   z-index: 0;
 }
@@ -98,19 +105,24 @@ body {
   display: block;
 }
 
+/* PERFORMANCE: Reduced blur, contrast, and complexity */
 .liquid-blob-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  filter: blur(40px) contrast(18);
+  filter: blur(30px) contrast(12);
   z-index: 0;
+  /* Use will-change sparingly */
+  will-change: auto;
 }
 
 .liquid-blob {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.35;
-  animation: blob-morph 16s ease-in-out infinite;
+  opacity: 0.25;
+  animation: blob-morph 20s ease-in-out infinite;
+  /* Promote to own layer only when animating */
+  will-change: auto;
 }
 
 .blob-1 {
@@ -118,7 +130,7 @@ body {
   height: 320px;
   left: -60px;
   top: 120px;
-  background: rgba(125, 211, 252, 0.45);
+  background: rgba(125, 211, 252, 0.35);
 }
 
 .blob-2 {
@@ -126,7 +138,7 @@ body {
   height: 280px;
   right: -80px;
   top: 40px;
-  background: rgba(167, 139, 250, 0.4);
+  background: rgba(167, 139, 250, 0.3);
   animation-delay: 2s;
 }
 
@@ -135,10 +147,11 @@ body {
   height: 340px;
   right: 10%;
   bottom: -80px;
-  background: rgba(56, 189, 248, 0.35);
+  background: rgba(56, 189, 248, 0.25);
   animation-delay: 4s;
 }
 
+/* PERFORMANCE: Simplified bubble effect */
 .bubble-layer {
   position: absolute;
   inset: 0;
@@ -151,9 +164,11 @@ body {
   position: absolute;
   bottom: -80px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
-  opacity: 0.6;
-  animation: bubble-rise 14s linear infinite, bubble-sway 4s ease-in-out infinite alternate;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.15));
+  opacity: 0.5;
+  animation: bubble-rise 18s linear infinite;
+  /* Removed complex sway animation for performance */
+  will-change: auto;
 }
 
 .bubble::before {
@@ -161,25 +176,26 @@ body {
   position: absolute;
   inset: 0;
   transform: scale(0.25) translate(-70%, -70%);
-  background: radial-gradient(rgba(255, 255, 255, 0.9), transparent);
+  background: radial-gradient(rgba(255, 255, 255, 0.8), transparent);
   border-radius: 50%;
 }
 
+/* PERFORMANCE: Reduced blur and saturation */
 .liquid-glass-card {
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
 }
 
-/* Premium variant for spotlight cards (used sparingly) */
+/* PERFORMANCE: Reduced blur, simplified gradients */
 .liquid-premium-card {
   position: relative;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.62);
-  backdrop-filter: blur(18px) saturate(185%);
-  -webkit-backdrop-filter: blur(18px) saturate(185%);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.58);
   box-shadow:
     0 24px 70px rgba(15, 23, 42, 0.14),
@@ -189,15 +205,15 @@ body {
 .liquid-premium-card::before {
   content: "";
   position: absolute;
-  inset: -45% -35% -35% -45%;
+  inset: -35% -25% -25% -35%;
   background:
-    radial-gradient(600px 420px at 30% 25%, rgba(125, 211, 252, 0.22), transparent 60%),
-    radial-gradient(520px 380px at 85% 20%, rgba(167, 139, 250, 0.16), transparent 58%),
-    radial-gradient(520px 420px at 55% 90%, rgba(14, 165, 233, 0.14), transparent 62%);
-  filter: blur(34px);
-  opacity: 0.65;
+    radial-gradient(500px 350px at 30% 25%, rgba(125, 211, 252, 0.18), transparent 60%),
+    radial-gradient(450px 320px at 85% 20%, rgba(167, 139, 250, 0.12), transparent 58%);
+  filter: blur(28px);
+  opacity: 0.55;
   transform: translate3d(0, 0, 0);
   pointer-events: none;
+  will-change: auto;
 }
 
 .liquid-premium-card::after {
@@ -205,17 +221,17 @@ body {
   position: absolute;
   inset: -1px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.0) 55%),
-    radial-gradient(360px 260px at 20% 10%, rgba(255, 255, 255, 0.55), transparent 60%);
-  opacity: 0.75;
-  transform: translate3d(-14%, -10%, 0) rotate(-6deg);
-  transition: transform 420ms ease, opacity 420ms ease;
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.0) 55%),
+    radial-gradient(300px 220px at 20% 10%, rgba(255, 255, 255, 0.45), transparent 60%);
+  opacity: 0.7;
+  transform: translate3d(-12%, -8%, 0) rotate(-5deg);
+  transition: transform 350ms ease, opacity 350ms ease;
   pointer-events: none;
 }
 
 .liquid-premium-card:hover::after {
-  opacity: 0.88;
-  transform: translate3d(-6%, -16%, 0) rotate(-8deg);
+  opacity: 0.85;
+  transform: translate3d(-6%, -14%, 0) rotate(-7deg);
 }
 
 .liquid-premium-card .liquid-premium-content {
@@ -225,8 +241,8 @@ body {
 
 .liquid-glass-hub {
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(14px) saturate(170%);
-  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
 }
@@ -235,13 +251,12 @@ body {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
 }
 
-/* Dark liquid-network surface (QClay-ish) */
+/* PERFORMANCE: Simplified gradients, reduced blur */
 .liquid-network-surface {
   position: relative;
   background:
-    radial-gradient(900px 600px at 50% 20%, rgba(99, 102, 241, 0.22), transparent 60%),
-    radial-gradient(900px 700px at 60% 70%, rgba(56, 189, 248, 0.14), transparent 60%),
-    radial-gradient(700px 520px at 25% 65%, rgba(167, 139, 250, 0.12), transparent 58%),
+    radial-gradient(800px 500px at 50% 20%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(700px 550px at 60% 70%, rgba(56, 189, 248, 0.10), transparent 60%),
     linear-gradient(180deg, rgba(2, 6, 23, 1), rgba(3, 7, 18, 1));
 }
 
@@ -249,32 +264,34 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.65;
+  opacity: 0.55;
   pointer-events: none;
   background-image:
-    radial-gradient(rgba(148, 163, 184, 0.12) 0.6px, transparent 0.6px);
+    radial-gradient(rgba(148, 163, 184, 0.1) 0.6px, transparent 0.6px);
   background-size: 26px 26px;
   mask-image: radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 70%);
 }
 
+/* PERFORMANCE: Reduced blur */
 .liquid-network-veil {
   position: absolute;
   inset: -20%;
-  opacity: 0.9;
+  opacity: 0.85;
   pointer-events: none;
-  filter: blur(40px);
+  filter: blur(32px);
   background:
-    radial-gradient(480px 420px at 45% 35%, rgba(56, 189, 248, 0.18), transparent 65%),
-    radial-gradient(520px 420px at 58% 52%, rgba(99, 102, 241, 0.22), transparent 66%),
-    radial-gradient(480px 420px at 52% 72%, rgba(167, 139, 250, 0.16), transparent 66%);
+    radial-gradient(420px 380px at 45% 35%, rgba(56, 189, 248, 0.15), transparent 65%),
+    radial-gradient(460px 380px at 58% 52%, rgba(99, 102, 241, 0.18), transparent 66%);
+  will-change: auto;
 }
 
+/* PERFORMANCE: Reduced blur, simplified */
 .liquid-orb {
   position: relative;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
     0 40px 140px rgba(0, 0, 0, 0.55),
@@ -284,13 +301,13 @@ body {
 .liquid-orb::before {
   content: "";
   position: absolute;
-  inset: -55%;
+  inset: -50%;
   border-radius: inherit;
   background:
-    radial-gradient(closest-side, rgba(99, 102, 241, 0.65), transparent 70%),
-    radial-gradient(closest-side, rgba(56, 189, 248, 0.5), transparent 72%);
-  filter: blur(24px);
-  opacity: 0.85;
+    radial-gradient(closest-side, rgba(99, 102, 241, 0.55), transparent 70%),
+    radial-gradient(closest-side, rgba(56, 189, 248, 0.4), transparent 72%);
+  filter: blur(20px);
+  opacity: 0.8;
   pointer-events: none;
 }
 
@@ -300,13 +317,14 @@ body {
   inset: 10%;
   border-radius: inherit;
   background:
-    radial-gradient(120px 90px at 28% 26%, rgba(255, 255, 255, 0.55), transparent 60%),
-    radial-gradient(160px 140px at 60% 66%, rgba(255, 255, 255, 0.22), transparent 66%);
+    radial-gradient(100px 80px at 28% 26%, rgba(255, 255, 255, 0.45), transparent 60%),
+    radial-gradient(140px 120px at 60% 66%, rgba(255, 255, 255, 0.18), transparent 66%);
   mix-blend-mode: screen;
-  opacity: 0.8;
+  opacity: 0.75;
   pointer-events: none;
 }
 
+/* PERFORMANCE: Slower animation */
 .liquid-orb-ring {
   position: absolute;
   inset: -18px;
@@ -315,15 +333,16 @@ body {
     conic-gradient(
       from 120deg,
       rgba(56, 189, 248, 0.0),
-      rgba(56, 189, 248, 0.55),
-      rgba(99, 102, 241, 0.55),
-      rgba(167, 139, 250, 0.45),
+      rgba(56, 189, 248, 0.5),
+      rgba(99, 102, 241, 0.5),
+      rgba(167, 139, 250, 0.4),
       rgba(56, 189, 248, 0.0)
     );
-  filter: blur(10px);
-  opacity: 0.9;
-  animation: orb-spin 10s linear infinite;
+  filter: blur(8px);
+  opacity: 0.85;
+  animation: orb-spin 15s linear infinite;
   pointer-events: none;
+  will-change: auto;
 }
 
 .liquid-orb-ring::before {
@@ -334,12 +353,13 @@ body {
   background: rgba(2, 6, 23, 0.85);
 }
 
+/* PERFORMANCE: Reduced blur */
 .liquid-node {
   position: relative;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
     0 22px 70px rgba(0, 0, 0, 0.48),
@@ -349,12 +369,12 @@ body {
 .liquid-node::before {
   content: "";
   position: absolute;
-  inset: -40% -30% -30% -40%;
+  inset: -35% -25% -25% -35%;
   background:
-    radial-gradient(420px 300px at 25% 25%, rgba(56, 189, 248, 0.18), transparent 60%),
-    radial-gradient(420px 320px at 85% 20%, rgba(99, 102, 241, 0.18), transparent 60%);
-  filter: blur(24px);
-  opacity: 0.65;
+    radial-gradient(380px 280px at 25% 25%, rgba(56, 189, 248, 0.15), transparent 60%),
+    radial-gradient(380px 300px at 85% 20%, rgba(99, 102, 241, 0.15), transparent 60%);
+  filter: blur(20px);
+  opacity: 0.6;
   pointer-events: none;
 }
 
@@ -362,16 +382,16 @@ body {
   content: "";
   position: absolute;
   inset: -1px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
-  opacity: 0.75;
-  transform: translate3d(-18%, -16%, 0) rotate(-10deg);
-  transition: transform 420ms ease, opacity 420ms ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+  opacity: 0.7;
+  transform: translate3d(-15%, -12%, 0) rotate(-8deg);
+  transition: transform 350ms ease, opacity 350ms ease;
   pointer-events: none;
 }
 
 .liquid-node:hover::after {
-  opacity: 0.95;
-  transform: translate3d(-8%, -24%, 0) rotate(-12deg);
+  opacity: 0.9;
+  transform: translate3d(-8%, -20%, 0) rotate(-10deg);
 }
 
 .liquid-node-content {
@@ -387,6 +407,7 @@ body {
   box-shadow: 0 0 18px rgba(56, 189, 248, 0.55);
 }
 
+/* PERFORMANCE: Slower rotation */
 @keyframes orb-spin {
   to {
     transform: rotate(360deg);
@@ -394,10 +415,13 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .liquid-orb-ring {
+  .liquid-orb-ring,
+  .liquid-blob,
+  .bubble {
     animation: none;
   }
-  .liquid-node::after {
+  .liquid-node::after,
+  .liquid-premium-card::after {
     transition: none;
   }
 }
@@ -419,7 +443,7 @@ body {
 }
 
 .flow-visible .connector-line {
-  animation: connector-draw 1.6s ease forwards;
+  animation: connector-draw 1.8s ease forwards;
 }
 
 .reduced-motion .connector-line {
@@ -428,11 +452,11 @@ body {
 }
 
 .hub-active {
-  animation: hub-pulse 1.6s ease-out;
+  animation: hub-pulse 1.8s ease-out;
 }
 
 .preview-pulse {
-  animation: preview-pulse 1.4s ease-out;
+  animation: preview-pulse 1.6s ease-out;
 }
 
 .reduced-motion .hub-active,
@@ -448,13 +472,13 @@ body {
     rgba(226, 232, 240, 0.55)
   );
   background-size: 220% 100%;
-  animation: shimmer 2.2s ease-in-out infinite;
+  animation: shimmer 2.6s ease-in-out infinite;
 }
 
 .bar-base {
   transform-origin: bottom;
   transform: scaleY(0.35);
-  transition: transform 320ms ease, opacity 320ms ease;
+  transition: transform 350ms ease, opacity 350ms ease;
   opacity: 0.65;
 }
 
@@ -466,7 +490,7 @@ body {
 .pill-base {
   transform: translateX(6px);
   opacity: 0;
-  transition: transform 260ms ease, opacity 260ms ease;
+  transition: transform 280ms ease, opacity 280ms ease;
 }
 
 .pill-animate {
@@ -522,6 +546,7 @@ body {
   }
 }
 
+/* PERFORMANCE: Slower animations */
 @keyframes connector-flow {
   0% {
     stroke-dashoffset: 0;
@@ -543,11 +568,11 @@ body {
 
 .connector-flow {
   stroke-dasharray: 3 10;
-  animation: connector-flow 6.5s linear infinite;
+  animation: connector-flow 8s linear infinite;
 }
 
 .connector-pulse {
-  animation: connector-pulse 3.2s ease-in-out infinite;
+  animation: connector-pulse 4s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -557,6 +582,7 @@ body {
   }
 }
 
+/* PERFORMANCE: Slower float animation */
 @keyframes ls-bubble-float {
   0% {
     transform: translate3d(0, 0, 0);
@@ -586,16 +612,16 @@ body {
     opacity: 0.75;
   }
   50% {
-    transform: scale(1.08);
+    transform: scale(1.06);
     opacity: 1;
   }
 }
 
 .ui-float {
-  will-change: transform;
-  animation: ui-float 4.8s ease-in-out infinite;
+  animation: ui-float 6s ease-in-out infinite;
 }
 
+/* PERFORMANCE: Slower sheen animation */
 .liquid-glass {
   position: relative;
 }
@@ -608,16 +634,16 @@ body {
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0) 25%,
-    rgba(255, 255, 255, 0.42) 45%,
+    rgba(255, 255, 255, 0.35) 45%,
     rgba(255, 255, 255, 0) 65%
   );
   background-size: 220% 220%;
   background-position: 0% 0%;
-  opacity: 0.55;
+  opacity: 0.5;
   mix-blend-mode: overlay;
   pointer-events: none;
-  filter: blur(6px);
-  animation: liquid-glass-sheen 10s ease-in-out infinite;
+  filter: blur(5px);
+  animation: liquid-glass-sheen 14s ease-in-out infinite;
 }
 
 .liquid-glass::after {
@@ -629,7 +655,7 @@ body {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.55),
     inset 0 -1px 0 rgba(15, 23, 42, 0.06);
-  opacity: 0.75;
+  opacity: 0.7;
 }
 
 @keyframes liquid-glass-sheen {
@@ -659,8 +685,7 @@ body {
 }
 
 .ui-node-pulse {
-  will-change: transform, opacity;
-  animation: ui-node-pulse 2.6s ease-in-out infinite;
+  animation: ui-node-pulse 3.2s ease-in-out infinite;
 }
 
 .ui-node-pulse-delay {
@@ -683,26 +708,18 @@ body {
   animation: none;
 }
 
+/* PERFORMANCE: Slower, simpler animations */
 @keyframes bubble-rise {
   0% {
     transform: translateY(0);
     opacity: 0.15;
   }
   20% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
   100% {
     transform: translateY(-120vh);
     opacity: 0;
-  }
-}
-
-@keyframes bubble-sway {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(40px);
   }
 }
 
@@ -714,6 +731,6 @@ body {
   }
   50% {
     border-radius: 40% 60% 55% 45% / 45% 55% 45% 55%;
-    transform: translate3d(20px, -10px, 0);
+    transform: translate3d(15px, -8px, 0);
   }
 }
